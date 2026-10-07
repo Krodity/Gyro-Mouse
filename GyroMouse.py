@@ -10,6 +10,7 @@ Standard library only. Runs on Windows (SendInput) and Linux (/dev/uinput).
 """
 
 import argparse
+import math
 import socket
 import struct
 import sys
@@ -155,6 +156,8 @@ def serve(sock, mapper, mouse):
         if len(data) != PACKET.size:
             continue  # not an OpenTrack packet; ignore it rather than die
         _, _, _, yaw, pitch, _ = PACKET.unpack(data)
+        if not (math.isfinite(yaw) and math.isfinite(pitch)):
+            continue
         dx, dy = mapper.update(yaw, pitch)
         if dx or dy:
             mouse.move(dx, dy)

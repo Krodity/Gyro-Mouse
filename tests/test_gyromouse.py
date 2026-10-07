@@ -62,7 +62,8 @@ class ServeTest(unittest.TestCase):
         t = threading.Thread(target=lambda: self._serve(rx, mouse), daemon=True)
         t.start()
         tx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        for data in (packet(0, 0), b"garbage", packet(-1, 0), packet(-1, 1)):
+        for data in (packet(0, 0), b"garbage", packet(float("nan"), 0), packet(float("inf"), 0),
+                     packet(-1, 0), packet(-1, 1)):
             tx.sendto(data, rx.getsockname())
         t.join(2)
         self.assertEqual(mouse.moves, [(40, 0), (0, 40)])
